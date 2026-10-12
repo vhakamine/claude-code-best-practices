@@ -1,0 +1,93 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a pyinstaller executable
+#  so that python does not see a .pyc file.
+#  The executable tries to rebuild .pyc ext in the same directory as the executable.
+#  so two files.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+temp/*
+*/temp/*
+
+# MCP
+.mcp.json
+
+# Claude Code
+.claude/
+# Note: We might want to keep .claude/ in the repo as it contains our configuration.
+# But if we want to allow local overrides, we could ignore .claude/ and keep only example files.
+# For now, we are keeping .claude/ in the repo as it contains the standard configuration.
+# However, we should consider adding .claude/local.json or similar for local overrides.
+# For this repository, we are keeping the standard .claude/ as part of the template.
