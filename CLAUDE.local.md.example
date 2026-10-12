@@ -1,0 +1,19 @@
+# Local Claude Overrides
+
+Copy this file to `CLAUDE.local.md`.
+
+This file is for personal preferences and machine-specific notes. It is ignored by git.
+
+Examples:
+
+- Local test command:
+  - `npm test`
+  - `pytest`
+  - `go test ./...`
+- Local development URL:
+  - `http://localhost:3000`
+- Personal preference:
+  - Ask before running long commands.
+  - Prefer plan-first responses for major refactors.
+
+Do not place secrets or credentials here.
