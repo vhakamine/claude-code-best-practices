@@ -1,0 +1,283 @@
+{
+  "permissions": {
+    "fileSystem": {
+      "read": ["{projectRoot}/**"],
+      "write": ["{projectRoot}/src/**", "{projectRoot}/docs/**", "{projectRoot}/tests/**", "{projectRoot}/scripts/**"],
+      "create": ["{projectRoot}/src/**", "{projectRoot}/docs/**", "{projectRoot}/tests/**", "{projectRoot}/scripts/**"],
+      "delete": ["{projectRoot}/tmp/**", "{projectRoot}/cache/**", "{projectRoot}/logs/**"],
+      "deny": [
+        "{projectRoot}/.env*", 
+        "{projectRoot}/*.key", 
+        "{projectRoot}/*.pem",
+        "{projectRoot}/**/id_*",
+        "{projectRoot}/**/*.ssh/**",
+        "{projectRoot}/**/secrets/**",
+        "{projectRoot}/**/private/**",
+        "{projectRoot}/**/*.json"  
+      ],
+      "allowExceptions": [
+        "{projectRoot}/package*.json",
+        "{projectRoot}/requirements*.txt",
+        "{projectRoot}/Pipfile*",
+        "{projectRoot}/tsconfig*.json",
+        "{projectRoot}/webpack*.config.js",
+        "{projectRoot}/jest*.config.js",
+        "{projectRoot}/.eslintrc*.js",
+        "{projectRoot}/.prettierrc*",
+        "{projectRoot}/*.config.{js,ts,json}",
+        "{projectRoot}/src/**/*.config.{js,ts,json}"
+      ]
+    },
+    "shell": {
+      "allow": [
+        "npm test", 
+        "pytest", 
+        "ruff check", 
+        "prettier --check",
+        "git status",
+        "git diff",
+        "git add -p",
+        "git commit --verify",
+        "npm run lint",
+        "python -m pytest",
+        "black --check .",
+        "isort --check-only .",
+        "safety check",
+        "bandit -r src/",
+        "npm audit",
+        "pip list --outdated",
+        "pipenv check",
+        "poetry check",
+        "dotenv-linter .env*",
+        "trivy fs .",
+        "hadolint Dockerfile*",
+        "kubelinter check .",
+        "tfsec .",
+        "checkov -d .",
+        "git-leaks scan --verbose"
+      ],
+      "deny": [
+        "rm -rf /",
+        "mkfs",
+        "fdisk",
+        "dd if=",
+        "> /dev/sd",
+        "curl",
+        "wget",
+        "ssh",
+        "scp",
+        "rsync",
+        "git push --force",
+        "git push -f",
+        "git push --tags --force",
+        "chmod 777",
+        "chown -R",
+        "su ",
+        "sudo ",
+        "doas ",
+        "pkexec ",
+        "nc -l",
+        "netcat -l",
+        "python -c \"import socket;s=socket.socket()\"",
+        "perl -e 'use Socket;$i=\"\"",
+        "ruby -rsocket -e'",
+        "php -r '$sock=fsockopen(\"",
+        "brew install",
+        "apt-get install",
+        "yum install",
+        "pacman -S",
+        "docker run",
+        "docker build",
+        "kubectl apply -f",
+        "helm install",
+        "terraform apply",
+        "aws ",
+        "az ",
+        "gcloud "
+      ]
+    },
+    "env": {
+      "allow": ["NODE_ENV", "PYTHONPATH", "DJANGO_SETTINGS_MODULE", "FLASK_ENV", "FASTAPI_ENV"],
+      "deny": [
+        "AWS_*", 
+        "AZURE_*", 
+        "GCP_*", 
+        "GOOGLE_*", 
+        "GITHUB_TOKEN*", 
+        "GH*", 
+        "NPM_TOKEN*", 
+        "YARN*", 
+        "PIP*", 
+        "PYPI*", 
+        "API_KEY*", 
+        "API*", 
+        "KEY*", 
+        "TOKEN*", 
+        "SECRET*", 
+        "PRIVATE*", 
+        "PASS*", 
+        "PASSWORD*", 
+        "PWD*", 
+        "CRED*", 
+        "CERT*", 
+        "SSL_*", 
+        "LDAP_*", 
+        "DB_*", 
+        "DATABASE_*", 
+        "MYSQL_*", 
+        "POSTGRES_*", 
+        "MONGO_*", 
+        "REDIS_*", 
+        "ELASTIC_*", 
+        "S3_*", 
+        "BUCKET_*", 
+        "QUEUE_*", 
+        "TOPIC_*", 
+        "SUBSCRIPTION_*", 
+        "STORAGE_*", 
+        "CONNECTION_*", 
+        "CONN_*",
+        "SASL_*",
+        "JDBC_*",
+        "ODBC_*",
+        "SSL_CERT*",
+        "SSL_KEY*",
+        "SSL_CA*",
+        "TLS_CERT*",
+        "TLS_KEY*",
+        "TLS_CA*"
+      ]
+    },
+    "network": {
+      "allow": ["localhost:*", "127.0.0.1:*", "0.0.0.0:*"],
+      "deny": ["*"], 
+      "allowExceptions": [
+        "api.github.com:*", 
+        "registry.npmjs.org:*", 
+        "pypi.org:*", 
+        "files.pythonhosted.org:*",
+        "github.com:*",
+        "objects.githubusercontent.com:*",
+        "avatars.githubusercontent.com:*",
+        "raw.githubusercontent.com:*",
+        "user-images.githubusercontent.com:*"
+      ]
+    }
+  },
+  "hooks": {
+    "preWrite": [
+      {
+        "command": "npx prettier --write {filePath}",
+        "description": "Auto-format code before writing",
+        "enabled": true,
+        "onFiles": ["**/*.{js,ts,jsx,tsx,css,scss,md,mdx,json,yml,yaml,html,vue}" ]
+      },
+      {
+        "command": "black {filePath}",
+        "description": "Format Python code before writing",
+        "enabled": true,
+        "onFiles": ["**/*.py"]
+      },
+      {
+        "command": "ruff check --fix {filePath}",
+        "description": "Fix Python linting issues before writing",
+        "enabled": true,
+        "onFiles": ["**/*.py"]
+      },
+      {
+        "command": "detect-secrets scan --baseline .secrets.baseline --force",
+        "description": "Prevent committing secrets",
+        "enabled": true,
+        "onFiles": ["**/*"]
+      }
+    ],
+    "postWrite": [
+      {
+        "command": "git diff --check {filePath}",
+        "description": "Check for whitespace errors",
+        "enabled": true
+      },
+      {
+        "command": "npm audit --production --json | npm-audit-responder",
+        "description": "Auto-resolve fixable vulnerabilities",
+        "enabled": true,
+        "onFiles": ["package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml"]
+      },
+      {
+        "command": "safety check --full-report",
+        "description": "Check Python dependencies for vulnerabilities",
+        "enabled": true,
+        "onFiles": ["requirements.txt", "requirements-dev.txt", "Pipfile", "Pipfile.lock", "pyproject.toml"]
+      }
+    ],
+    "preToolUse": [
+      {
+        "tool": "bash",
+        "command": "echo \"$(date -Iseconds) [PRE-HOOK] Tool: $HERMES_HOOK_TOOL, Args: $HERMES_HOOK_ARGS\" >> ~/.hermes/hooks/audit.log",
+        "description": "Audit all tool usage for security monitoring",
+        "enabled": true
+      },
+      {
+        "tool": "str_replace_editor",
+        "command": "if grep -q \"\\b(password|secret|key|token)\\s*[:=]\\s*[\"'\\`]\" \"$HERMES_HOOK_PATH\"; then echo \"ALERT: Potential secret detected in $HERMES_HOOK_PATH\" >&2; exit 1; fi",
+        "description": "Block writing potential secrets to files",
+        "enabled": true
+      }
+    ],
+    "postToolUse": [
+      {
+        "tool": ["bash", "str_replace_editor", "notepad"],
+        "command": "if [ -n \"$HERMES_HOOK_FILE_PATH\" ]; then echo \"$(date -Iseconds) [POST-HOOK] Modified: $HERMES_HOOK_FILE_PATH\" >> ~/.hermes/hooks/changes.log; fi",
+        "description": "Log file modifications for change tracking",
+        "enabled": true
+      }
+    ],
+    "onRequest": [
+      {
+        "command": "if [[ \"$HERMES_HOOK_PROMPT\" =~ (secret|password|key|token|credential) ]]; then echo \"SECURITY WARNING: Request contains sensitive terms. Proceed with caution.\" >&2; fi",
+        "description": "Warn about potentially sensitive requests",
+        "enabled": true
+      }
+    ]
+  },
+  "agentDefaults": {
+    "research-agent": {
+      "permissions": {
+        "fileSystem": {
+          "read": ["{projectRoot}/**", "/tmp/*", "/var/tmp/*"],
+          "write": ["{projectRoot}/research/**", "{projectRoot}/docs/research/**", "{projectRoot}/tmp/**"],
+          "deny": ["{projectRoot}/src/**", "{projectRoot}/.git/**", "{projectRoot}/**/.*"]
+        },
+        "shell": {
+          "allow": ["curl", "wget", "python", "tesseract", "pdftotext", "ffmpeg", "imageMagick"],
+          "deny": ["rm", "mv", "cp >", ">", ">>"]
+        }
+      }
+    },
+    "code-review-agent": {
+      "permissions": {
+        "fileSystem": {
+          "read": ["{projectRoot}/**"],
+          "write": ["{projectRoot}/reviews/**", "{projectRoot}/docs/reviews/**"],
+          "deny": ["{projectRoot}/.git/**", "{projectRoot}/node_modules/**", "{projectRoot}/__pycache__/**"]
+        },
+        "shell": {
+          "allow": ["bandit", "safety", "npm audit", "pip list", "pip show", "grep", "rg", "awk", "sed"],
+          "deny": ["rm", "mv", "cp", "dd", ">"]
+        }
+      }
+    }
+  },
+  "model": {
+    "preferred": "claude-3-5-sonnet-20241022"
+  },
+  "workspace": {
+    "timeout": 300,
+    "maxRetries": 3,
+    "sandbox": {
+      "enabled": true,
+      "readOnly": ["/etc", "/usr", "/boot", "/lib", "/lib64", "/sbin", "/bin"],
+      "tmpDir": "{projectRoot}/tmp"
+    }
+  }
+}
